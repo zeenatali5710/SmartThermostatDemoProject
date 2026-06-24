@@ -1,0 +1,6 @@
+@SmartThermostat.Api_HostAddress = http://localhost:5123
+
+GET {{SmartThermostat.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

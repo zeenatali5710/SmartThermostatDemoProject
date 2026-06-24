@@ -1,0 +1,27 @@
+services:
+  # Apache Kafka in KRaft mode (no ZooKeeper). Small native image, Kafka-wire-compatible,
+  # so the .NET Confluent.Kafka client talks to it unchanged. Swapped in place of Redpanda
+  # because the Redpanda image was too large to pull reliably here.
+  kafka:
+    image: apache/kafka-native:3.8.0
+    container_name: smartthermostat-kafka
+    ports:
+      - "19092:19092"   # external Kafka listener (used by the .NET apps on the host)
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,OUTSIDE://0.0.0.0:19092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,OUTSIDE://localhost:19092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+
+  redis:
+    image: redis:7
+    container_name: smartthermostat-redis
+    ports:
+      - "6379:6379"

@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/RulesProcessor.Worker/RulesProcessor.Worker.csproj" />
+    <Project Path="src/SmartThermostat.Api/SmartThermostat.Api.csproj" />
+    <Project Path="src/SmartThermostat.Shared/SmartThermostat.Shared.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,16 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.user
+
+# Test results
+[Tt]est[Rr]esult*/
+
+# Local database files (demo SQLite)
+*.db
+*.db-shm
+*.db-wal

@@ -4,4 +4,7 @@
     <Project Path="src/SmartThermostat.Api/SmartThermostat.Api.csproj" />
     <Project Path="src/SmartThermostat.Shared/SmartThermostat.Shared.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/RulesProcessor.Worker.Tests/RulesProcessor.Worker.Tests.csproj" />
+  </Folder>
 </Solution>

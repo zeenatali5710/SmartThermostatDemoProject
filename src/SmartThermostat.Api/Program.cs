@@ -52,6 +52,38 @@ app.MapGet("/state/{deviceId}", async (string deviceId, StateStore store) =>
 .WithName("GetDeviceState")
 .WithSummary("Get the latest known state for a device.");
 
+// Liveness/readiness: report whether the API's backing dependencies are reachable.
+app.MapGet("/health", async (IConnectionMultiplexer redis, AlertStore alerts) =>
+{
+    var redisOk = false;
+    try
+    {
+        redisOk = (await redis.GetDatabase().PingAsync()) >= TimeSpan.Zero;
+    }
+    catch
+    {
+        // Treat any connection/ping failure as unhealthy; details are intentionally not leaked.
+    }
+
+    var sqliteOk = false;
+    try
+    {
+        // EnsureSchemaAsync opens the SQLite connection and runs a trivial command.
+        await alerts.EnsureSchemaAsync();
+        sqliteOk = true;
+    }
+    catch
+    {
+        // Unhealthy if the database can't be opened.
+    }
+
+    var healthy = redisOk && sqliteOk;
+    var body = new { status = healthy ? "healthy" : "unhealthy", redis = redisOk, sqlite = sqliteOk };
+    return healthy ? Results.Ok(body) : Results.Json(body, statusCode: 503);
+})
+.WithName("GetHealth")
+.WithSummary("Report API health, including Redis and SQLite connectivity.");
+
 // READ side: recent alerts (written to SQLite by AlertProcessor), optionally filtered.
 app.MapGet("/alerts", async (AlertStore store, string? deviceId, int? limit) =>
 {
